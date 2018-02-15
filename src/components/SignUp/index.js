@@ -27,7 +27,7 @@ const INITIAL_STATE = {
 
 class SignUpForm extends Component {
   constructor(props) {
-    super(props);
+    super();
 
     this.state = { ...INITIAL_STATE };
   }

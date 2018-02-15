@@ -11,20 +11,22 @@ const withAuthorization = (condition) => (Component) => {
     componentDidMount() {
       firebase.auth.onAuthStateChanged(authUser => {
         console.log(authUser)
-        if (!condition(authUser)) {
+        if (!condition(authUser)) { // fix
           this.props.history.push(routes.SIGN_IN);
         }
       });
     }
 
     render() {
-      return this.props.authUser ? <Component /> : null;
+      const { authUser } = this.props;
+      return this.props.authUser ? <Component authUser={ authUser} /> : null;
     }
   }
 
   const mapStateToProps = (state) => ({
     authUser: state.sessionState.authUser,
   });
+  
 
   return compose(
     withRouter,

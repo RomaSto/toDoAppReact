@@ -6,10 +6,40 @@ import  * as firebase from 'firebase';
 import { SignUpLink } from '../SignUp';
 import { PasswordForgetLink } from '../PasswordForget';
 import * as authFunctions from '../../firebase/auth';
+import * as db from '../../firebase/db';
 import * as routes from '../../constants/routes';
 
 const SignInPage = ({ history }) => {
+const compareUsers = () => {
+  const currentUser = firebase.auth().currentUser;
+  console.log(firebase.auth().currentUser)
+    db.onceGetUsers().then(snapshot => {
+      const users = snapshot.val()
+      console.log(users )
+      if (!users) {
+        console.log('llllll')
+        db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
+      } else {
+        console.log('users')
+        if (!Object.keys(users).includes(currentUser.uid)) {
+          db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
+        }
+        // Object.keys(users).forEach(item => {
+        //   console.log(item, currentUser.uid)
+        //   if (!(item === currentUser.uid)) {
+        //     console.log('yyyyyy')
+        //     db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
+        //   }
+        // })
+      }
+    })
 
+return true
+
+}
+  // Object.keys().forEach(item => item === currentUser.uid)
+// ?false : 
+  // db.doCreateUser(this.props.authUser.uid, this.authUser.displayName, this.authUser.email)
   // Configure FirebaseUI
   const uiConfig = {
     // Popup signin flow rather than redirect flow.
@@ -20,7 +50,10 @@ const SignInPage = ({ history }) => {
     signInOptions: [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       firebase.auth.FacebookAuthProvider.PROVIDER_ID
-    ]
+    ], 
+    callbacks: {
+      signInSuccess: () => compareUsers()
+    }
   };
   return <div>
     <h1>SignIn</h1>
