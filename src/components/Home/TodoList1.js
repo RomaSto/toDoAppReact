@@ -46,7 +46,7 @@ class TodosList extends Component {
       todosArray: []
     };
     const { handleDelete, handleToggle } = this.props;
-    // console.log(todosFromServer)
+
 
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -62,9 +62,9 @@ class TodosList extends Component {
           'completed': todosFromServer[key].completed,
           'priority': todosFromServer[key].priority
         }
-      })
+      }).sort((a,b) => a.priority - b.priority)
       this.setState({ todosArray }) 
-      console.log(todosArray)
+      // console.log(todosArray)
     } 
   }
 
@@ -79,6 +79,7 @@ class TodosList extends Component {
       result.source.index,
       result.destination.index
     );
+    console.log(result)
     let obj ={};
     todosArray.forEach((e, i) => {
       let uid = e.uid
@@ -86,12 +87,12 @@ class TodosList extends Component {
 
     })
     
-    db.updatePriority(firebase.auth().currentUser, obj)
+    db.updatePriority(firebase.auth().currentUser, obj).then((e) =>console.log(e))
 
     this.setState({
       todosArray,
     });
-    console.log(this.state.todosArray)
+    // console.log(this.state.todosArray)
   }
   render() {
     return (
@@ -103,7 +104,7 @@ class TodosList extends Component {
               style={getListStyle(snapshot.isDraggingOver)}
             >
               {this.state.todosArray.map((item, index) => (
-                <Draggable key={item.uid} draggableId={item.uid} index={item.priority}>
+                <Draggable key={item.uid} draggableId={item.uid} index={index}>
                   {(provided, snapshot) => (
                     <div>
                       <div

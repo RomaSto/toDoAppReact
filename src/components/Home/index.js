@@ -8,7 +8,26 @@ import { db } from '../../firebase';
 import {auth} from '../../firebase/firebase';
 import { CREATE_TODO_REQUEST } from '../../actions/actionTypes'
 import TodosList from './TodoList1'
-
+import Board from 'react-trello'
+const data = {
+  lanes: [
+    {
+      id: 'lane1',
+      title: 'Planned Tasks',
+      label: '2/2',
+      cards: [
+        { id: 'Card1', title: 'Write Blog', description: 'Can AI make memes', label: '30 mins' },
+        { id: 'Card2', title: 'Pay Rent', description: 'Transfer via NEFT', label: '5 mins', metadata: { sha: 'be312a1' } }
+      ]
+    },
+    {
+      id: 'lane2',
+      title: 'Completed',
+      label: '0/0',
+      cards: []
+    }
+  ]
+}
 
 class HomePage extends Component {
   constructor(props) {
@@ -30,7 +49,7 @@ class HomePage extends Component {
       let todosFromServer = snapshot.val()
       
        this.setState({ todosFromServer });
-       console.log(this.state.todosFromServer)
+      //  console.log(this.state.todosFromServer)
     });
 
 
@@ -86,6 +105,7 @@ push (e)  {
         <button type='submit' >add toDo</button>
         </form>
         <TodosList handleDelete={this.handleDelete} handleToggle={this.handleToggle} todosFromServer={this.state.todosFromServer}/>
+        <Board data={data} draggable={true} editable={true}/>
       </div>
     );
   }

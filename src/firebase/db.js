@@ -34,11 +34,16 @@ export const push = (authUser, todo) => {
   // });
 }
 export const updatePriority = (authUser, todos) => {
-  console.log(authUser, todos);
+  // console.log(authUser, todos);
 
-  db.ref(`users/${authUser.uid}/toDos`).update(
-    todos
-  );
+    return new Promise((resolve, reject) => {
+      db.ref(`users/${authUser.uid}/toDos`).update(
+        todos
+      ).then((todos) => resolve(todos))
+      // .push(action.text, error => error ? reject(error) : resolve());
+  });
+
+
 
 }
 
