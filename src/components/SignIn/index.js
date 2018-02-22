@@ -17,10 +17,10 @@ const compareUsers = () => {
       const users = snapshot.val()
       console.log(users )
       if (!users) {
-        console.log('llllll')
+
         db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
       } else {
-        console.log('users')
+        console.log('user`s')
         if (!Object.keys(users).includes(currentUser.uid)) {
           db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
         }
