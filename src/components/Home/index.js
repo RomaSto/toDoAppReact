@@ -1,88 +1,119 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import * as firebase from 'firebase';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { compose } from "redux";
+import * as firebase from "firebase";
 
-import withAuthorization from '../Session/withAuthorization';
-import { db } from '../../firebase';
-import {auth} from '../../firebase/firebase';
-import { CREATE_TODO_REQUEST } from '../../actions/actionTypes'
-import TodosList from './TodoList1'
-import Board from 'react-trello'
+import withAuthorization from "../Session/withAuthorization";
+import { db } from "../../firebase";
+import { auth } from "../../firebase/firebase";
+import { CREATE_TODO_REQUEST } from "../../actions/actionTypes";
+import TodosList from "./TodoList1";
+import Board from "react-trello";
 const data = {
   lanes: [
     {
-      id: 'lane1',
-      title: 'Planned Tasks',
-      label: '2/2',
+      id: "planned",
+      title: "Planned Tasks",
+      label: "2/2",
       cards: [
-        { id: 'Card1', title: 'Write Blog', description: 'Can AI make memes', label: '30 mins' },
-        { id: 'Card2', title: 'Pay Rent', description: 'Transfer via NEFT', label: '5 mins', metadata: { sha: 'be312a1' } }
+        {
+          id: "Card2",
+          title: "Pay Rent",
+          description: "Transfer via NEFT",
+          label: "5 mins",
+          metadata: { sha: "be312a1" }
+        },
+        {
+          id: "Card1",
+          title: "Write Blog",
+          description: "Can AI make memes",
+          label: "30 mins"
+        }
       ]
     },
     {
-      id: 'lane2',
-      title: 'Completed',
-      label: '0/0',
+      id: "completed",
+      title: "Completed",
+      label: "0/0",
       cards: []
     }
   ]
-}
+};
 
 class HomePage extends Component {
   constructor(props) {
-    super(props)
-    this.state = { todoInput: '', todosFromServer: []}
+    super(props);
+    this.state = {
+      todoInput: "",
+      todosFromServer: [],
+      boardData: {
+        lanes: [
+          {
+            id: "planned",
+            title: "Planned Tasks",
+            label: "2/2",
+            cards: []
+          },
+          {
+            id: "completed",
+            title: "Completed",
+            label: "0/0",
+            cards: []
+          }
+        ]
+      }
+    };
     this.authUser = this.props.authUser;
-    this.push = this.push.bind(this);
     this.priority = 0;
   }
   componentDidMount() {
-//     const { onSetUsers } = this.props;
-// console.log(this.props.users)
-//     db.onceGetUsers().then(snapshot =>
-//       onSetUsers(snapshot.val())
-//     );
-     db.getTodos(firebase.auth().currentUser.uid).on('value', (snapshot) => {
-      // console.log(snapshot.val());
+    //     const { onSetUsers } = this.props;
+    // console.log(this.props.users)
+    //     db.onceGetUsers().then(snapshot =>
+    //       onSetUsers(snapshot.val())
+    //     );
+    db.getTodos(firebase.auth().currentUser.uid).on("value", snapshot => {
+      console.log("snapshot", snapshot.val());
 
-      let todosFromServer = snapshot.val()
-      
-       this.setState({ todosFromServer });
-      //  console.log(this.state.todosFromServer)
+      let todosFromServer = snapshot.val();
+      console.log(Object.keys(todosFromServer));
+
+      Object.keys(todosFromServer).map(el => {});
+      // this.setState({ todosFromServer });
+      // console.log(this.state.todosFromServer);
     });
-
-
   }
 
+  // handleChange= (event) => {
+  //   this.setState({ todoInput: event.target.value });
+  // }
 
+  // handleDelete = (event) => {
+  //   db.deleteTodo(firebase.auth().currentUser.uid, event.target.parentNode.id)
 
-  handleChange= (event) => {
-    this.setState({ todoInput: event.target.value });
-  }
+  // }
 
-  handleDelete = (event) => {
-    db.deleteTodo(firebase.auth().currentUser.uid, event.target.parentNode.id)
+  // handleToggle = (event, completed) => {
+  //   db.toggleTodo(firebase.auth().currentUser.uid, event.target.parentNode.id, !completed)
+  //   console.log(completed);
+  //   console.log('event');
+  // }
 
-  }
-
-  handleToggle = (event, completed) => {
-    db.toggleTodo(firebase.auth().currentUser.uid, event.target.parentNode.id, !completed)
-    console.log(completed);
-    console.log('event');
-  }
-
-push (e)  {
-
-  // console.log(this.props.authUser)
-  // db.doCreateUser(this.props.authUser.uid, this.authUser.displayName, this.authUser.email)
-  if (this.state.todoInput !== "") {
-
-    db.push(this.props.authUser, { 'text':this.state.todoInput, 'completed': false, 'priority': this.priority})
-    this.priority ++
-  }
-  this.setState({ todoInput: '' });
-  e.preventDefault()
+  handleCardAdd = (card, laneId) => {
+    // console.log(card, laneId, this.props.authUser);
+    // db.doCreateUser(this.props.authUser.uid, this.authUser.displayName, this.authUser.email)
+    const { dispatch } = this.props;
+    dispatch({
+      type: "ADD_TODO",
+      payload: { authUser: this.props.authUser, toDo: { ...card, laneId } }
+    });
+    // db.push(this.props.authUser, {
+    //   ...card,
+    //   laneId
+    // });
+    // this.priority++;
+    // this.setState({ todoInput: "" });
+    // e.preventDefault();
     // db.ref(`toDos/${this.props.authUser.uid}`).set({
     //   [Date.now()]: 'fuck'
     // });
@@ -91,40 +122,60 @@ push (e)  {
 
     //     // .push(action.text, error => error ? reject(error) : resolve());
     // });
-  }
+  };
 
   render() {
-    const { users } = this.props;
+    const {
+      props: { users },
+      handleCardAdd
+    } = this;
 
     return (
       <div>
         <h1>Home</h1>
         <p>The Home Page is accessible by every signed in user.</p>
-        <form onSubmit={this.push}>
-        <input type="text" value={this.state.todoInput} onChange={this.handleChange} />
-        <button type='submit' >add toDo</button>
-        </form>
-        <TodosList handleDelete={this.handleDelete} handleToggle={this.handleToggle} todosFromServer={this.state.todosFromServer}/>
-        <Board data={data} draggable={true} editable={true}/>
+        {
+          // <form onSubmit={this.push}>
+          //     <input
+          //       type="text"
+          //       value={this.state.todoInput}
+          //       onChange={this.handleChange}
+          //     />
+          //     <button type="submit">add toDo</button>
+          //   </form>
+          //   <TodosList
+          //     handleDelete={this.handleDelete}
+          //     handleToggle={this.handleToggle}
+          //     todosFromServer={this.state.todosFromServer}
+          //   />
+        }
+        <Board
+          data={data}
+          draggable={true}
+          editable={true}
+          onCardAdd={handleCardAdd}
+        />
       </div>
     );
   }
 }
 
-
-
-const mapStateToProps = (state) => ({
-  users: state.userState.users,
+const mapStateToProps = state => ({
+  users: state.userState.users
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  onSetUsers: (users) => dispatch({ type: 'USERS_SET', users }),
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  onSetUsers: users => dispatch({ type: "USERS_SET", users })
   // onCreateTodoRequest: ( users) => { console.log( users); return dispatch({ type: CREATE_TODO_REQUEST, users })},
 });
 
-const authCondition = (authUser) => !!authUser;
+const authCondition = authUser => !!authUser;
 
 export default compose(
   withAuthorization(authCondition),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(HomePage);
