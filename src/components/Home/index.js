@@ -7,7 +7,6 @@ import withAuthorization from "../Session/withAuthorization";
 import { db } from "../../firebase";
 import { auth } from "../../firebase/firebase";
 import { CREATE_TODO_REQUEST } from "../../actions/actionTypes";
-import TodosList from "./TodoList1";
 import Board from "react-trello";
 const data = {
   lanes: [
@@ -63,8 +62,8 @@ class HomePage extends Component {
         ]
       }
     };
-    this.authUser = this.props.authUser;
-    this.priority = 0;
+
+    // this.priority = 0;
   }
   componentDidMount() {
     //     const { onSetUsers } = this.props;
@@ -72,16 +71,21 @@ class HomePage extends Component {
     //     db.onceGetUsers().then(snapshot =>
     //       onSetUsers(snapshot.val())
     //     );
-    db.getTodos(firebase.auth().currentUser.uid).on("value", snapshot => {
-      console.log("snapshot", snapshot.val());
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: "GET_TODOS",
+    //   payload: { id: firebase.auth().currentUser.uid }
+    // });
+    // db.getTodos(firebase.auth().currentUser.uid).on("value", snapshot => {
+    //   console.log("snapshot", snapshot.val());
 
-      let todosFromServer = snapshot.val();
-      console.log(Object.keys(todosFromServer));
+    //   let todosFromServer = snapshot.val();
+    //   console.log(Object.keys(todosFromServer));
 
-      Object.keys(todosFromServer).map(el => {});
-      // this.setState({ todosFromServer });
-      // console.log(this.state.todosFromServer);
-    });
+    //   Object.keys(todosFromServer).map(el => {});
+    //   // this.setState({ todosFromServer });
+    //   // console.log(this.state.todosFromServer);
+    // });
   }
 
   // handleChange= (event) => {
@@ -98,14 +102,18 @@ class HomePage extends Component {
   //   console.log(completed);
   //   console.log('event');
   // }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (!this.props.todos) {
+  //   }
+  // }
 
-  handleCardAdd = (card, laneId) => {
+  handleCardAdd = board => {
     // console.log(card, laneId, this.props.authUser);
     // db.doCreateUser(this.props.authUser.uid, this.authUser.displayName, this.authUser.email)
     const { dispatch } = this.props;
     dispatch({
-      type: "ADD_TODO",
-      payload: { authUser: this.props.authUser, toDo: { ...card, laneId } }
+      type: "UPDATE_BOARD",
+      payload: { userUid: this.props.authUser.uid, board }
     });
     // db.push(this.props.authUser, {
     //   ...card,
@@ -126,9 +134,11 @@ class HomePage extends Component {
 
   render() {
     const {
-      props: { users },
+      props: { users, todos },
+      state: { boardData },
       handleCardAdd
     } = this;
+    console.log("props", this.props);
 
     return (
       <div>
@@ -150,10 +160,16 @@ class HomePage extends Component {
           //   />
         }
         <Board
-          data={data}
+          canAddLanes={true}
+          data={!todos ? boardData : todos}
           draggable={true}
           editable={true}
+          laneDraggable={false}
           onCardAdd={handleCardAdd}
+          onDataChange={d => {
+            handleCardAdd(d);
+            console.log(d);
+          }}
         />
       </div>
     );
@@ -161,7 +177,9 @@ class HomePage extends Component {
 }
 
 const mapStateToProps = state => ({
-  users: state.userState.users
+  users: state.userReducer.users,
+  todos: state.todosReducer.todos,
+  state
 });
 
 const mapDispatchToProps = dispatch => ({

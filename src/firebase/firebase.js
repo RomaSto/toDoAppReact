@@ -30,10 +30,10 @@ const config = process.env.NODE_ENV === "production" ? prodConfig : devConfig;
 if (!firebase.apps.length) {
   firebase.initializeApp(config);
 }
-// const reduxSagaFirebase = new ReduxSagaFirebase(firebase);
+const reduxSagaFirebase = new ReduxSagaFirebase(firebase);
 
 const db = firebase.database();
 const auth = firebase.auth();
 
-export { db, auth };
+export { db, auth, reduxSagaFirebase };
 // export default reduxSagaFirebase;

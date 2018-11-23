@@ -1,11 +1,13 @@
-import { combineReducers } from 'redux';
-import {sessionReducer, todoReducer} from './session';
-import userReducer from './user';
+import { combineReducers } from "redux";
+import { sessionReducer } from "./session";
+import { todosReducer } from "./todos";
+
+import userReducer from "./user";
 
 const rootReducer = combineReducers({
-  sessionState: sessionReducer,
-  userState: userReducer,
-  // todos: todoReducer
+  sessionReducer,
+  userReducer,
+  todosReducer
 });
 
 export default rootReducer;

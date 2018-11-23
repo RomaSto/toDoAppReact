@@ -1,6 +1,5 @@
-import { push} from '../firebase/db'
 const INITIAL_STATE = {
-  authUser: null,
+  authUser: null
 };
 
 const applySetAuthUser = (state, action) => ({
@@ -9,25 +8,13 @@ const applySetAuthUser = (state, action) => ({
 });
 
 function sessionReducer(state = INITIAL_STATE, action) {
-  switch(action.type) {
-    case 'AUTH_USER_SET' : {
+  switch (action.type) {
+    case "AUTH_USER_SET": {
       return applySetAuthUser(state, action);
     }
-    default : return state;
+    default:
+      return state;
   }
 }
 
-// function todoReducer(state = {}, action) {
-//   switch (action.type) {
-//     case 'CREATE_TODO_REQUEST': {
-//       return push(state, action);
-//     }
-//     default: return state;
-//   }
-// }
-
-
-
-
-
-export { sessionReducer} ;
+export { sessionReducer };
