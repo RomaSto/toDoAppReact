@@ -44,23 +44,23 @@ class HomePage extends Component {
     super(props);
     this.state = {
       todoInput: "",
-      todosFromServer: [],
-      boardData: {
-        lanes: [
-          {
-            id: "planned",
-            title: "Planned Tasks",
-            label: "2/2",
-            cards: []
-          },
-          {
-            id: "completed",
-            title: "Completed",
-            label: "0/0",
-            cards: []
-          }
-        ]
-      }
+      todosFromServer: []
+      // boardData: {
+      //   lanes: [
+      //     {
+      //       id: "planned",
+      //       title: "Planned Tasks",
+      //       label: "2/2",
+      //       cards: []
+      //     },
+      //     {
+      //       id: "completed",
+      //       title: "Completed",
+      //       label: "0/0",
+      //       cards: []
+      //     }
+      //   ]
+      // }
     };
 
     // this.priority = 0;
@@ -78,10 +78,8 @@ class HomePage extends Component {
     // });
     // db.getTodos(firebase.auth().currentUser.uid).on("value", snapshot => {
     //   console.log("snapshot", snapshot.val());
-
     //   let todosFromServer = snapshot.val();
     //   console.log(Object.keys(todosFromServer));
-
     //   Object.keys(todosFromServer).map(el => {});
     //   // this.setState({ todosFromServer });
     //   // console.log(this.state.todosFromServer);
@@ -107,14 +105,16 @@ class HomePage extends Component {
   //   }
   // }
 
-  handleCardAdd = board => {
+  handleCardAdd = (card, laneId) => {
     // console.log(card, laneId, this.props.authUser);
+    console.log(card, laneId);
+
     // db.doCreateUser(this.props.authUser.uid, this.authUser.displayName, this.authUser.email)
     const { dispatch } = this.props;
-    dispatch({
-      type: "UPDATE_BOARD",
-      payload: { userUid: this.props.authUser.uid, board }
-    });
+    // dispatch({
+    //   type: "ADD_TODO",
+    //   payload: { userUid: this.props.authUser.uid, card, laneId }
+    // });
     // db.push(this.props.authUser, {
     //   ...card,
     //   laneId
@@ -161,15 +161,15 @@ class HomePage extends Component {
         }
         <Board
           canAddLanes={true}
-          data={!todos ? boardData : todos}
+          data={todos}
           draggable={true}
           editable={true}
           laneDraggable={false}
           onCardAdd={handleCardAdd}
-          onDataChange={d => {
-            handleCardAdd(d);
-            console.log(d);
-          }}
+          // onDataChange={d => {
+          //   handleCardAdd(d);
+          //   console.log(d);
+          // }}
         />
       </div>
     );

@@ -6,38 +6,40 @@ import { reduxSagaFirebase as rsf } from "../firebase/firebase";
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 
 function* getTodos(action) {
+  // let defaultBoard = {
+  //   lanes: [
+  //     {
+  //       id: "planned",
+  //       title: "Planned Tasks",
+  //       label: "2/2",
+  //       cards: []
+  //     },
+  //     {
+  //       id: "completed",
+  //       title: "Completed",
+  //       label: "0/0",
+  //       cards: []
+  //     }
+  //   ]
+  // };
   try {
+    yield put({ type: "GET_TODOS_PENDING", payload: true });
     const todos = yield call(
       rsf.database.read,
-      `users/${action.payload.id}/toDos`
+      `users/${action.payload.id}/board`
     );
     console.log("inside v", action.payload.id);
     console.log(todos);
-
+    // if (todos.lanes) {
     yield put({ type: "GET_TODOS_SUCCESS", payload: todos });
+    // } else {
+    //   yield put({ type: "GET_TODOS_SUCCESS", payload: defaultBoard });
+    // }
   } catch (error) {
     yield put({ type: "GET_TODOS_FAILED", payload: error });
   }
+  yield put({ type: "GET_TODOS_PENDING", payload: false });
 }
-// function* fetchTodos(action) {
-//   try {
-//     export const getTodos = id => db.ref(`users/${id}/toDos`);
-//     // const firstTodo = yield call(rsf.database.read, "todos/1");
-//     // yield put(gotTodo(firstTodo));
-//     // db.getTodos(firebase.auth().currentUser.uid).on("value", snapshot => {
-//     //   console.log("snapshot", snapshot.val());
-//     //   let todosFromServer = snapshot.val();
-//     //   console.log(Object.keys(todosFromServer));
-//     //   Object.keys(todosFromServer).map(el => {});
-//     //   // this.setState({ todosFromServer });
-//     //   // console.log(this.state.todosFromServer);
-//     // });
-//     // const user = yield call(Api.fetchUser, action.payload.userId);
-//     // yield put({ type: "USER_FETCH_SUCCEEDED", user: user });
-//   } catch (e) {
-//     yield put({ type: "USER_FETCH_FAILED", message: e.message });
-//   }
-// }
 function* updateBoard(action) {
   console.log("action", action);
 
@@ -52,15 +54,14 @@ function* updateBoard(action) {
   }
 }
 function* addTodo(action) {
-  try {
-    const response = yield db.push(
-      action.payload.authUser,
-      action.payload.toDo
-    );
-    console.log("response", response);
+  console.log("addTodo", action);
 
-    // const user = yield call(Api.fetchUser, action.payload.userId);
-    // yield put({ type: "USER_FETCH_SUCCEEDED", user: user });
+  try {
+    yield call(
+      rsf.database.create,
+      `users/${action.payload.userUid}/board/lanes/${action.payload.laneId}`,
+      action.payload.card
+    );
   } catch (e) {
     yield put({ type: "ADD_TODO_FAILED", message: e.message });
   }
