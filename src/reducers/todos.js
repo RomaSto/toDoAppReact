@@ -1,19 +1,7 @@
 const INITIAL_STATE = {
   todos: {
-    lanes: [
-      {
-        id: "planned",
-        title: "Planned Tasks",
-        label: "2/2",
-        cards: []
-      },
-      {
-        id: "completed",
-        title: "Completed",
-        label: "0/0",
-        cards: []
-      }
-    ]
+
+    lanes:[]
   },
   getTodosPending: false
 };

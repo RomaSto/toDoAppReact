@@ -6,22 +6,26 @@ import { reduxSagaFirebase as rsf } from "../firebase/firebase";
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 
 function* getTodos(action) {
-  // let defaultBoard = {
-  //   lanes: [
-  //     {
-  //       id: "planned",
-  //       title: "Planned Tasks",
-  //       label: "2/2",
-  //       cards: []
-  //     },
-  //     {
-  //       id: "completed",
-  //       title: "Completed",
-  //       label: "0/0",
-  //       cards: []
-  //     }
-  //   ]
-  // };
+  let defaultBoard = {
+    lanes: [
+      {
+        id: "planned",
+        title: "Planned Tasks",
+        label: "2/2",
+        cards: [{
+          id: "0b930190-fa63-11e8-a315-8fa6dca03e75",
+title: "dd"}]
+      },
+      {
+        id: "completed",
+        title: "Completed",
+        label: "0/0",
+        cards: [{
+          id: "0b930190-fa63-11e8-a315-8fa6dca03e75",
+title: "dd"}]
+      }
+    ]
+  };
   try {
     yield put({ type: "GET_TODOS_PENDING", payload: true });
     const todos = yield call(
@@ -30,11 +34,11 @@ function* getTodos(action) {
     );
     console.log("inside v", action.payload.id);
     console.log(todos);
-    // if (todos.lanes) {
+    if (todos &&todos.lanes) {
     yield put({ type: "GET_TODOS_SUCCESS", payload: todos });
-    // } else {
-    //   yield put({ type: "GET_TODOS_SUCCESS", payload: defaultBoard });
-    // }
+    } else {
+      yield put({ type: "GET_TODOS_SUCCESS", payload: defaultBoard });
+    }
   } catch (error) {
     yield put({ type: "GET_TODOS_FAILED", payload: error });
   }

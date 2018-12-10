@@ -2,42 +2,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import * as firebase from "firebase";
+import _ from "lodash";
 
 import withAuthorization from "../Session/withAuthorization";
 import { db } from "../../firebase";
 import { auth } from "../../firebase/firebase";
 import { CREATE_TODO_REQUEST } from "../../actions/actionTypes";
 import Board from "react-trello";
-const data = {
-  lanes: [
-    {
-      id: "planned",
-      title: "Planned Tasks",
-      label: "2/2",
-      cards: [
-        {
-          id: "Card2",
-          title: "Pay Rent",
-          description: "Transfer via NEFT",
-          label: "5 mins",
-          metadata: { sha: "be312a1" }
-        },
-        {
-          id: "Card1",
-          title: "Write Blog",
-          description: "Can AI make memes",
-          label: "30 mins"
-        }
-      ]
-    },
-    {
-      id: "completed",
-      title: "Completed",
-      label: "0/0",
-      cards: []
-    }
-  ]
-};
 
 class HomePage extends Component {
   constructor(props) {
@@ -45,25 +16,8 @@ class HomePage extends Component {
     this.state = {
       todoInput: "",
       todosFromServer: []
-      // boardData: {
-      //   lanes: [
-      //     {
-      //       id: "planned",
-      //       title: "Planned Tasks",
-      //       label: "2/2",
-      //       cards: []
-      //     },
-      //     {
-      //       id: "completed",
-      //       title: "Completed",
-      //       label: "0/0",
-      //       cards: []
-      //     }
-      //   ]
-      // }
     };
 
-    // this.priority = 0;
   }
   componentDidMount() {
     //     const { onSetUsers } = this.props;
@@ -71,11 +25,11 @@ class HomePage extends Component {
     //     db.onceGetUsers().then(snapshot =>
     //       onSetUsers(snapshot.val())
     //     );
-    // const { dispatch } = this.props;
-    // dispatch({
-    //   type: "GET_TODOS",
-    //   payload: { id: firebase.auth().currentUser.uid }
-    // });
+    const { dispatch } = this.props;
+    dispatch({
+      type: "GET_TODOS",
+      payload: { id: firebase.auth().currentUser.uid }
+    });
     // db.getTodos(firebase.auth().currentUser.uid).on("value", snapshot => {
     //   console.log("snapshot", snapshot.val());
     //   let todosFromServer = snapshot.val();
@@ -108,9 +62,16 @@ class HomePage extends Component {
   handleCardAdd = (card, laneId) => {
     // console.log(card, laneId, this.props.authUser);
     console.log(card, laneId);
+    const { dispatch } = this.props;
+    if (!_.isEqual(card, this.props.todos) && this.props.todos.lanes.length){
+
+      dispatch({
+        type: "UPDATE_BOARD",
+        payload: { userUid: this.props.authUser.uid, board:card }
+      });
+    } 
 
     // db.doCreateUser(this.props.authUser.uid, this.authUser.displayName, this.authUser.email)
-    const { dispatch } = this.props;
     // dispatch({
     //   type: "ADD_TODO",
     //   payload: { userUid: this.props.authUser.uid, card, laneId }
@@ -131,17 +92,20 @@ class HomePage extends Component {
     //     // .push(action.text, error => error ? reject(error) : resolve());
     // });
   };
+  normalizeTodos=(board)=>{
+  let newBoard={}
+    newBoard.lanes = board.lanes.map((lane)=>{
+      if (!lane.cards) lane.cards = []
+      return lane
+})
+    return newBoard
+  }
 
   render() {
-    const {
-      props: { users, todos },
-      state: { boardData },
-      handleCardAdd
-    } = this;
+    const { props: { users, todos }, state: { boardData }, handleCardAdd, normalizeTodos } = this;
     console.log("props", this.props);
 
-    return (
-      <div>
+    return <div>
         <h1>Home</h1>
         <p>The Home Page is accessible by every signed in user.</p>
         {
@@ -159,20 +123,12 @@ class HomePage extends Component {
           //     todosFromServer={this.state.todosFromServer}
           //   />
         }
-        <Board
-          canAddLanes={true}
-          data={todos}
-          draggable={true}
-          editable={true}
-          laneDraggable={false}
-          onCardAdd={handleCardAdd}
-          // onDataChange={d => {
-          //   handleCardAdd(d);
-          //   console.log(d);
-          // }}
-        />
-      </div>
-    );
+        <Board canAddLanes={true} data={normalizeTodos(todos)} draggable={true} editable={true} laneDraggable={false} // onCardAdd={handleCardAdd}
+          onDataChange={d => {
+            console.log(d);
+            handleCardAdd(d);
+          }} />
+      </div>;
   }
 }
 
