@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { FirebaseAuth } from "react-firebaseui";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import * as firebase from "firebase";
 
 import { SignUpLink } from "../SignUp";
@@ -9,40 +11,48 @@ import * as authFunctions from "../../firebase/auth";
 import * as db from "../../firebase/db";
 import * as routes from "../../constants/routes";
 
-const SignInPage = ({ history }) => {
+const SignInPage = ({ history, dispatch }) => {
   const compareUsers = () => {
     const currentUser = firebase.auth().currentUser;
-    console.log("compareUsers");
+    console.log("compareUsers", currentUser);
 
-    console.log(firebase.auth().currentUser);
-    db.onceGetUsers().then(snapshot => {
-      const users = snapshot.val();
-      console.log(users);
-      if (!users) {
-        db.doCreateUser(
-          currentUser.uid,
-          currentUser.displayName,
-          currentUser.email
-        );
-      } else {
-        console.log("user`s");
-        if (!Object.keys(users).includes(currentUser.uid)) {
-          db.doCreateUser(
-            currentUser.uid,
-            currentUser.displayName,
-            currentUser.email
-          );
-        }
-        // Object.keys(users).forEach(item => {
-        //   console.log(item, currentUser.uid)
-        //   if (!(item === currentUser.uid)) {
-        //     console.log('yyyyyy')
-        //     db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
-        //   }
-        // })
+    dispatch({
+      type: "CHECK_USER",
+      payload: {
+        uid: currentUser.uid,
+        displayName: currentUser.displayName,
+        email: currentUser.email
       }
     });
-    history.push(routes.HOME);
+    // console.log(firebase.auth().currentUser);
+    // db.onceGetUsers().then(snapshot => {
+    //   const users = snapshot.val();
+    //   console.log("users", users);
+    //   if (!users) {
+    //     db.doCreateUser(
+    //       currentUser.uid,
+    //       currentUser.displayName,
+    //       currentUser.email
+    //     );
+    //   } else {
+    //     console.log("user`s");
+    //     if (!Object.keys(users).includes(currentUser.uid)) {
+    //       db.doCreateUser(
+    //         currentUser.uid,
+    //         currentUser.displayName,
+    //         currentUser.email
+    //       );
+    //     }
+    //     // Object.keys(users).forEach(item => {
+    //     //   console.log(item, currentUser.uid)
+    //     //   if (!(item === currentUser.uid)) {
+    //     //     console.log('yyyyyy')
+    //     //     db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
+    //     //   }
+    //     // })
+    //   }
+    // });
+    history.push(routes.LANDING);
     return false;
   };
   // Object.keys().forEach(item => item === currentUser.uid)
@@ -141,7 +151,14 @@ class SignInForm extends Component {
     );
   }
 }
+const mapDispatchToProps = dispatch => ({
+  dispatch
+});
 
-export default withRouter(SignInPage);
-
-export { SignInForm };
+export default compose(
+  withRouter,
+  connect(
+    null,
+    mapDispatchToProps
+  )
+)(SignInPage);
