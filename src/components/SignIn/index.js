@@ -14,8 +14,6 @@ import * as routes from "../../constants/routes";
 const SignInPage = ({ history, dispatch }) => {
   const compareUsers = () => {
     const currentUser = firebase.auth().currentUser;
-    console.log("compareUsers", currentUser);
-
     dispatch({
       type: "CHECK_USER",
       payload: {
@@ -24,47 +22,12 @@ const SignInPage = ({ history, dispatch }) => {
         email: currentUser.email
       }
     });
-    // console.log(firebase.auth().currentUser);
-    // db.onceGetUsers().then(snapshot => {
-    //   const users = snapshot.val();
-    //   console.log("users", users);
-    //   if (!users) {
-    //     db.doCreateUser(
-    //       currentUser.uid,
-    //       currentUser.displayName,
-    //       currentUser.email
-    //     );
-    //   } else {
-    //     console.log("user`s");
-    //     if (!Object.keys(users).includes(currentUser.uid)) {
-    //       db.doCreateUser(
-    //         currentUser.uid,
-    //         currentUser.displayName,
-    //         currentUser.email
-    //       );
-    //     }
-    //     // Object.keys(users).forEach(item => {
-    //     //   console.log(item, currentUser.uid)
-    //     //   if (!(item === currentUser.uid)) {
-    //     //     console.log('yyyyyy')
-    //     //     db.doCreateUser(currentUser.uid, currentUser.displayName, currentUser.email)
-    //     //   }
-    //     // })
-    //   }
-    // });
-    history.push(routes.LANDING);
+    history.push(routes.HOME);
     return false;
   };
-  // Object.keys().forEach(item => item === currentUser.uid)
-  // ?false :
-  // db.doCreateUser(this.props.authUser.uid, this.authUser.displayName, this.authUser.email)
-  // Configure FirebaseUI
+
   const uiConfig = {
-    // Popup signin flow rather than redirect flow.
     signInFlow: "popup",
-    // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-    // signInSuccessUrl: "/home",
-    // We will display Google and Facebook as auth providers.
     signInOptions: [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       firebase.auth.FacebookAuthProvider.PROVIDER_ID

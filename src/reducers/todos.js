@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
-  boards: [{ lanes: [] }],
-  getBoardsPending: false
+  boards: {},
+  getBoardsPending: false,
+  currentBoard: { lanes: [], users: [] }
 };
 
 function todosReducer(state = INITIAL_STATE, action) {
@@ -29,6 +30,11 @@ function todosReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         updateBoardError: action.payload
+      };
+    case "GET_BOARD_SUCCESS":
+      return {
+        ...state,
+        currentBoard: action.payload
       };
 
     default:
