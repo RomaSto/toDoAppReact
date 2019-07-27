@@ -1,22 +1,40 @@
 const INITIAL_STATE = {
-  todos: {
-
-    lanes:[]
-  },
-  getTodosPending: false
+  boards: {},
+  getBoardsPending: false,
+  currentBoard: { lanes: [], users: [] }
 };
 
 function todosReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case "GET_TODOS_SUCCESS":
+    case "GET_BOARDS_SUCCESS":
       return {
         ...state,
-        todos: action.payload
+        boards: action.payload
       };
-    case "GET_TODOS_PENDING":
+    case "GET_BOARDS_PENDING":
       return {
         ...state,
-        getTodosPending: action.payload
+        getBoardsPending: action.payload
+      };
+    case "GET_BOARDS_ERROR":
+      return {
+        ...state,
+        getBoardsError: action.payload
+      };
+    case "UPDATE_BOARD_PENDING":
+      return {
+        ...state,
+        updateBoardPending: action.payload
+      };
+    case "UPDATE_BOARD_ERROR":
+      return {
+        ...state,
+        updateBoardError: action.payload
+      };
+    case "GET_BOARD_SUCCESS":
+      return {
+        ...state,
+        currentBoard: action.payload
       };
 
     default:
