@@ -1,67 +1,53 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import * as firebase from "firebase";
-import _ from "lodash";
-import Share from "./Share";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import * as firebase from 'firebase';
+import _ from 'lodash';
+import Board from 'react-trello';
+import Share from './Share';
 
-import withAuthorization from "../Session/withAuthorization";
-import { db } from "../../firebase";
-import { auth } from "../../firebase/firebase";
-import Board from "react-trello";
-
-// let eventBus = undefined;
 class BoardContainer extends Component {
   constructor(props) {
     super(props);
     this.state = { eventBus: undefined };
   }
+
   componentDidMount() {
     const { dispatch } = this.props;
-    console.log("dddd", "componentDidMount");
 
     dispatch({
-      type: "GET_BOARD",
-      payload: { boardId: this.props.match.params.id }
+      type: 'GET_BOARD',
+      payload: { boardId: this.props.match.params.id },
     });
   }
+
   componentWillUnmount() {
     this.props.dispatch({
-      type: "GET_BOARD_SUCCESS",
-      payload: { lanes: [], users: [] }
+      type: 'GET_BOARD_SUCCESS',
+      payload: { lanes: [], users: [] },
     });
   }
 
-  // setEventBus = handle => {
-  //   this.setState({ eventBus: handle });
-  // };
-  // shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   console.log("fdsfsdfs", nextProps.board, this.props.board);
-  //   if (_.isEqual(nextProps.board, this.props.board)) {
-  //     console.log("fdsfsdfs");
-
-  //     return false;
-  //   }
-  //   return true;
-  // }
   handleShareBoard = ({ email, resolve, reject }) => {
-    let res = this.props.dispatch({
-      type: "SHARE_BOARD",
+    const { id, name } = this.props.board;
+    const res = this.props.dispatch({
+      type: 'SHARE_BOARD',
       payload: {
         email,
         userUid: firebase.auth().currentUser.uid,
-        boardId: this.props.board.id,
-        boardName: this.props.board.name,
+        boardId: id,
+        boardName: name,
         // userName: firebase.auth().currentUser.displayName,
         resolve,
-        reject
-      }
+        reject,
+      },
     });
-    console.log("res1", res);
+    console.log('res1', res);
   };
-  handleBoardUpdate = board => {
+
+  handleBoardUpdate = (board) => {
     // console.log(card, laneId, this.props.authUser);
-    console.log("card", board);
+    console.log('card', board);
     const { dispatch } = this.props;
     if (!_.isEqual(board, this.props.board) && this.props.board.lanes.length) {
       // this.state.eventBus.publish({type: 'UPDATE_LANES', lanes: newLaneData});
@@ -69,22 +55,23 @@ class BoardContainer extends Component {
       board.id = this.props.board.id;
       board.users = this.props.board.users;
       dispatch({
-        type: "UPDATE_BOARD",
+        type: 'UPDATE_BOARD',
         payload: {
           boardId: this.props.board.id,
           board,
-          userId: this.props.userId
+          userId: this.props.userId,
           // eventBus: this.state.eventBus
-        }
+        },
       });
     }
   };
-  normalizeTodos = board => {
-    let newBoard = {};
+
+  normalizeTodos = (board) => {
+    const newBoard = {};
     console.log(board);
 
-    newBoard.lanes = board.lanes.map(lane => {
-      let newLane = _.clone(lane, true);
+    newBoard.lanes = board.lanes.map((lane) => {
+      const newLane = _.clone(lane, true);
       if (!newLane.cards) {
         newLane.cards = [];
       }
@@ -99,9 +86,9 @@ class BoardContainer extends Component {
     const {
       props: { board },
       handleBoardUpdate,
-      normalizeTodos
+      normalizeTodos,
     } = this;
-    console.log("props", this.props);
+    console.log('props', this.props);
 
     return (
       <div>
@@ -110,9 +97,7 @@ class BoardContainer extends Component {
         <div>
           <span>Users:</span>
           <ul>
-            {Object.keys(board.users).map(el => {
-              return <li>{board.users[el]}</li>;
-            })}
+            {Object.keys(board.users).map(el => <li>{board.users[el]}</li>)}
           </ul>
           <Share handleShareBoard={this.handleShareBoard} />
         </div>
@@ -121,8 +106,8 @@ class BoardContainer extends Component {
             // eventBusHandle={setEventBus}
             id={Math.random().toString()}
             data={normalizeTodos(board)}
-            draggable={true}
-            editable={true}
+            draggable
+            editable
             laneDraggable={false} // onCardAdd={handleCardAdd}
             onDataChange={handleBoardUpdate}
           />
@@ -134,23 +119,23 @@ class BoardContainer extends Component {
 
 const mapStateToProps = state => ({
   // users: state.userReducer.users,
-  board: state.todosReducer.currentBoard
+  board: state.todosReducer.currentBoard,
   // updateBoardPending: state.todosReducer.updateBoardPending
   // state
 });
 
 const mapDispatchToProps = dispatch => ({
-  dispatch
+  dispatch,
   // onSetUsers: users => dispatch({ type: "USERS_SET", users })
   // onCreateTodoRequest: ( users) => { console.log( users); return dispatch({ type: CREATE_TODO_REQUEST, users })},
 });
 
-const authCondition = authUser => !!authUser;
+// const authCondition = authUser => !!authUser;
 
 export default compose(
   // withAuthorization(authCondition),
   connect(
     mapStateToProps,
-    mapDispatchToProps
-  )
+    mapDispatchToProps,
+  ),
 )(BoardContainer);

@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 
 import { auth } from '../../firebase';
 
-const updateByPropertyName = (propertyName, value) => () => ({
-  [propertyName]: value,
-});
-
 const INITIAL_STATE = {
   passwordOne: '',
   passwordTwo: '',
@@ -26,8 +22,8 @@ class PasswordChangeForm extends Component {
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
       })
-      .catch(error => {
-        this.setState(updateByPropertyName('error', error));
+      .catch((error) => {
+        this.setState({'error': error});
       });
 
     event.preventDefault();
@@ -40,21 +36,19 @@ class PasswordChangeForm extends Component {
       error,
     } = this.state;
 
-    const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === '';
+    const isInvalid = passwordOne !== passwordTwo || passwordOne === '';
 
     return (
       <form onSubmit={this.onSubmit}>
         <input
           value={passwordOne}
-          onChange={event => this.setState(updateByPropertyName('passwordOne', event.target.value))}
+          onChange={event => this.setState({'passwordOne': event.target.value})}
           type="password"
           placeholder="New Password"
         />
         <input
           value={passwordTwo}
-          onChange={event => this.setState(updateByPropertyName('passwordTwo', event.target.value))}
+          onChange={event => this.setState({'passwordTwo': event.target.value})}
           type="password"
           placeholder="Confirm New Password"
         />

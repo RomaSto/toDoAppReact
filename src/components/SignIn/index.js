@@ -1,40 +1,41 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import { FirebaseAuth } from "react-firebaseui";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import * as firebase from "firebase";
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { FirebaseAuth } from 'react-firebaseui';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import * as firebase from 'firebase';
+import PropTypes from 'prop-types';
 
-import { SignUpLink } from "../SignUp";
-import { PasswordForgetLink } from "../PasswordForget";
-import * as authFunctions from "../../firebase/auth";
-import * as db from "../../firebase/db";
-import * as routes from "../../constants/routes";
+import { SignUpLink } from '../SignUp';
+import { PasswordForgetLink } from '../PasswordForget';
+import * as authFunctions from '../../firebase/auth';
+// import * as db from '../../firebase/db';
+import * as routes from '../../constants/routes';
 
 const SignInPage = ({ history, dispatch }) => {
   const compareUsers = () => {
-    const currentUser = firebase.auth().currentUser;
+    const { currentUser } = firebase.auth();
     dispatch({
-      type: "CHECK_USER",
+      type: 'CHECK_USER',
       payload: {
         uid: currentUser.uid,
         displayName: currentUser.displayName,
-        email: currentUser.email
-      }
+        email: currentUser.email,
+      },
     });
     history.push(routes.HOME);
     return false;
   };
 
   const uiConfig = {
-    signInFlow: "popup",
+    signInFlow: 'popup',
     signInOptions: [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
     ],
     callbacks: {
-      signInSuccess: compareUsers
-    }
+      signInSuccess: compareUsers,
+    },
   };
   return (
     <div>
@@ -46,15 +47,19 @@ const SignInPage = ({ history, dispatch }) => {
     </div>
   );
 };
+SignInPage.propTypes = {
+  history: PropTypes.object.isRequired,
+  dispatch: PropTypes.object.isRequired,
+};
 
 const updateByPropertyName = (propertyName, value) => () => ({
-  [propertyName]: value
+  [propertyName]: value,
 });
 
 const INITIAL_STATE = {
-  email: "",
-  password: "",
-  error: null
+  email: '',
+  password: '',
+  error: null,
 };
 
 class SignInForm extends Component {
@@ -64,7 +69,7 @@ class SignInForm extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  onSubmit = event => {
+  onSubmit = (event) => {
     const { email, password } = this.state;
 
     const { history } = this.props;
@@ -75,8 +80,8 @@ class SignInForm extends Component {
         this.setState(() => ({ ...INITIAL_STATE }));
         history.push(routes.HOME);
       })
-      .catch(error => {
-        this.setState(updateByPropertyName("error", error));
+      .catch((error) => {
+        this.setState(updateByPropertyName('error', error));
       });
 
     event.preventDefault();
@@ -85,22 +90,20 @@ class SignInForm extends Component {
   render() {
     const { email, password, error } = this.state;
 
-    const isInvalid = password === "" || email === "";
+    const isInvalid = password === '' || email === '';
 
     return (
       <form onSubmit={this.onSubmit}>
         <input
           value={email}
-          onChange={event =>
-            this.setState(updateByPropertyName("email", event.target.value))
+          onChange={event => this.setState(updateByPropertyName('email', event.target.value))
           }
           type="text"
           placeholder="Email Address"
         />
         <input
           value={password}
-          onChange={event =>
-            this.setState(updateByPropertyName("password", event.target.value))
+          onChange={event => this.setState(updateByPropertyName('password', event.target.value))
           }
           type="password"
           placeholder="Password"
@@ -114,14 +117,18 @@ class SignInForm extends Component {
     );
   }
 }
+
+SignInForm.propTypes = {
+  history: PropTypes.object.isRequired,
+};
 const mapDispatchToProps = dispatch => ({
-  dispatch
+  dispatch,
 });
 
 export default compose(
   withRouter,
   connect(
     null,
-    mapDispatchToProps
-  )
+    mapDispatchToProps,
+  ),
 )(SignInPage);

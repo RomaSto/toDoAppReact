@@ -1,18 +1,26 @@
-import React, { Component } from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import React, { Component } from 'react';
+import {
+  Formik, Field, Form, ErrorMessage,
+} from 'formik';
+import PropTypes from 'prop-types';
+
 
 class ShareBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mail: ""
+      mail: '',
     };
   }
-  handleShare = e => {
+
+  handleShare = (e) => {
+    const { handleShareBoard } = this.props;
+    const { mail } = this.state;
     e.preventDefault();
-    this.props.handleShareBoard(this.state.mail);
+    handleShareBoard(mail);
   };
-  handleChange = event => {
+
+  handleChange = (event) => {
     this.setState({ mail: event.target.value });
   };
 
@@ -31,31 +39,32 @@ class ShareBoard extends Component {
           // </form>
         }
         <Formik
-          initialValues={{ email: "" }}
-          validate={values => {
-            let errors = {};
+          initialValues={{ email: '' }}
+          validate={(values) => {
+            const errors = {};
             if (!values.email) {
-              errors.email = "Required";
+              errors.email = 'Required';
             } else if (
               !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
             ) {
-              errors.email = "Invalid email address";
+              errors.email = 'Invalid email address';
             }
             return errors;
           }}
-          onSubmit={(values, actions) => {
-            return new Promise((resolve, reject) => {
-              this.props.handleShareBoard({
-                email: values.email,
-                resolve,
-                reject
-              });
-            }).then(null, error => {
-              actions.setSubmitting(false);
-              actions.setErrors({ email: error });
+          onSubmit={(values, actions) => new Promise((resolve, reject) => {
+            const { handleShareBoard } = this.props;
+            handleShareBoard({
+              email: values.email,
+              resolve,
+              reject,
             });
-          }}
-          render={({ errors, status, touched, isSubmitting }) => (
+          }).then(null, (error) => {
+            actions.setSubmitting(false);
+            actions.setErrors({ email: error });
+          })}
+          render={({
+            status, isSubmitting,
+          }) => (
             <Form>
               <Field type="email" name="email" placeholder="jane@mail.com" />
               <ErrorMessage name="email" component="div" />
@@ -71,6 +80,9 @@ class ShareBoard extends Component {
     );
   }
 }
+ShareBoard.propTypes = {
+  handleShareBoard: PropTypes.object.isRequired,
+};
 
 export default ShareBoard;
 

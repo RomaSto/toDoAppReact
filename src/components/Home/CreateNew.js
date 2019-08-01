@@ -1,36 +1,39 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import * as firebase from "firebase";
-import { v4 as uuidv4 } from "uuid";
-import _ from "lodash";
+import React, { Component } from 'react';
+// import { connect } from 'react-redux';
+// import { compose } from 'redux';
+// import * as firebase from 'firebase';
+// import { v4 as uuidv4 } from 'uuid';
+// import _ from 'lodash';
 
-import withAuthorization from "../Session/withAuthorization";
-import { db } from "../../firebase";
-import Board from "./Board";
-import { auth } from "../../firebase/firebase";
+// import withAuthorization from '../Session/withAuthorization';
+// import { db } from '../../firebase';
+// import Board from './Board';
+// import { auth } from '../../firebase/firebase';
 
 class CreateNew extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: ""
+      name: '',
     };
   }
-  handleCreateNewBoard = e => {
+
+  handleCreateNewBoard = (e) => {
     e.preventDefault();
     this.props.handleCreateNewBoard(this.state.name);
   };
-  handleChange = event => {
+
+  handleChange = (event) => {
     this.setState({ name: event.target.value });
   };
 
   render() {
+    const { name } = this.state;
     return (
       <div>
         <form style={{ marginBottom: 20 }} onSubmit={this.handleCreateNewBoard}>
           <input
-            value={this.state.name}
+            value={name}
             onChange={this.handleChange}
             type="text"
           />

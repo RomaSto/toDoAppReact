@@ -1,13 +1,18 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-import SignOutButton from "../SignOut";
-import * as routes from "../../constants/routes";
+import SignOutButton from '../SignOut';
+import * as routes from '../../constants/routes';
 
 const Navigation = ({ authUser }) => (
   <div>{authUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>
 );
+
+Navigation.propTypes = {
+  authUser: PropTypes.object.isRequired,
+};
 
 const NavigationAuth = () => (
   <ul>
@@ -26,6 +31,7 @@ const NavigationAuth = () => (
   </ul>
 );
 
+
 const NavigationNonAuth = () => (
   <ul>
     <li>
@@ -38,7 +44,7 @@ const NavigationNonAuth = () => (
 );
 
 const mapStateToProps = state => ({
-  authUser: state.sessionReducer.authUser
+  authUser: state.sessionReducer.authUser,
 });
 
 export default connect(mapStateToProps)(Navigation);

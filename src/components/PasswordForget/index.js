@@ -4,15 +4,12 @@ import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
 import * as routes from '../../constants/routes';
 
-const PasswordForgetPage = () =>
+const PasswordForgetPage = () => (
   <div>
     <h1>Password Forget</h1>
     <PasswordForgetForm />
   </div>
-
-const updateByPropertyName = (propertyName, value) => () => ({
-  [propertyName]: value,
-});
+);
 
 const INITIAL_STATE = {
   email: '',
@@ -33,8 +30,8 @@ class PasswordForgetForm extends Component {
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
       })
-      .catch(error => {
-        this.setState(updateByPropertyName('error', error));
+      .catch((error) => {
+        this.setState({'error': error});
       });
 
     event.preventDefault();
@@ -51,8 +48,8 @@ class PasswordForgetForm extends Component {
     return (
       <form onSubmit={this.onSubmit}>
         <input
-          value={this.state.email}
-          onChange={event => this.setState(updateByPropertyName('email', event.target.value))}
+          value={email}
+          onChange={event => this.setState({'email': event.target.value})}
           type="text"
           placeholder="Email Address"
         />
@@ -66,11 +63,11 @@ class PasswordForgetForm extends Component {
   }
 }
 
-const PasswordForgetLink = () =>
+const PasswordForgetLink = () => (
   <p>
     <Link to={routes.PASSWORD_FORGET}>Forgot Password?</Link>
   </p>
-
+);
 export default PasswordForgetPage;
 
 export {
