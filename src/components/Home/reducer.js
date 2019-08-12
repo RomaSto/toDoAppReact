@@ -7,7 +7,7 @@ import {GET_BOARDS_SUCCESS,
   GET_BOARD_SUCCESS,
   GET_BOARD_PENDING,
   GET_BOARD_ERROR,
-} from '../constants/actions'
+} from '../../constants/actions'
 
 const INITIAL_STATE = {
   boards: {},

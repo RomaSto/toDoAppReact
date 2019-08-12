@@ -1,3 +1,9 @@
+
+export const  CREATE_BOARD ='CREATE_BOARD'
+export const  SHARE_BOARD ='SHARE_BOARD'
+export const  GET_BOARD ='GET_BOARD'
+export const  UPDATE_BOARD ='UPDATE_BOARD'
+
 export const  GET_BOARDS_SUCCESS ='GET_BOARDS_SUCCESS'
 export const  GET_BOARDS_PENDING ='GET_BOARDS_PENDING'
 export const  GET_BOARDS_ERROR ='GET_BOARDS_ERROR'

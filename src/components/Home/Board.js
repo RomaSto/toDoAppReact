@@ -5,6 +5,7 @@ import * as firebase from 'firebase';
 import _ from 'lodash';
 import Board from 'react-trello';
 import Share from './Share';
+import {shareBoard, getBoard, getBoardSuccess, updateBoard} from "./actions"
 
 class BoardContainer extends Component {
   constructor(props) {
@@ -13,56 +14,62 @@ class BoardContainer extends Component {
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
-
-    dispatch({
-      type: 'GET_BOARD',
-      payload: { boardId: this.props.match.params.id },
-    });
+    // const { dispatch } = this.props;
+this.props.getBoard(this.props.match.params.id)
+    // dispatch({
+    //   type: 'GET_BOARD',
+    //   payload: { boardId: this.props.match.params.id },
+    // });
   }
 
   componentWillUnmount() {
-    this.props.dispatch({
-      type: 'GET_BOARD_SUCCESS',
-      payload: { lanes: [], users: [] },
-    });
+    this.props.getBoardSuccess()
+
+    // this.props.dispatch({
+    //   type: 'GET_BOARD_SUCCESS',
+    //   payload: { lanes: [], users: [] },
+    // });
   }
 
   handleShareBoard = ({ email, resolve, reject }) => {
     const { id, name } = this.props.board;
-    const res = this.props.dispatch({
-      type: 'SHARE_BOARD',
-      payload: {
-        email,
-        userUid: firebase.auth().currentUser.uid,
-        boardId: id,
-        boardName: name,
-        // userName: firebase.auth().currentUser.displayName,
-        resolve,
-        reject,
-      },
-    });
-    console.log('res1', res);
+   const uid = firebase.auth().currentUser.uid
+   const res =   this.props.shareBoard( {email, uid, id , name, resolve , reject})
+    // const res = this.props.dispatch({
+    //   type: 'SHARE_BOARD',
+    //   payload: {
+    //     email,
+    //     userUid: firebase.auth().currentUser.uid,
+    //     boardId: id,
+    //     boardName: name,
+    //     // userName: firebase.auth().currentUser.displayName,
+    //     resolve,
+    //     reject,
+    //   },
+    // });
+    // console.log('res1', res);
   };
 
   handleBoardUpdate = (board) => {
     // console.log(card, laneId, this.props.authUser);
     console.log('card', board);
-    const { dispatch } = this.props;
+    // const { dispatch } = this.props;
     if (!_.isEqual(board, this.props.board) && this.props.board.lanes.length) {
       // this.state.eventBus.publish({type: 'UPDATE_LANES', lanes: newLaneData});
-      board.name = this.props.board.name;
-      board.id = this.props.board.id;
-      board.users = this.props.board.users;
-      dispatch({
-        type: 'UPDATE_BOARD',
-        payload: {
-          boardId: this.props.board.id,
-          board,
-          userId: this.props.userId,
-          // eventBus: this.state.eventBus
-        },
-      });
+      const { name, id, users} = this.props.board
+      board.name = name;
+      board.id = id;
+      board.users = users;
+      this.props.updateBoard(id, board,this.props.userId)
+      // dispatch({
+      //   type: 'UPDATE_BOARD',
+      //   payload: {
+      //     boardId: this.props.board.id,
+      //     board,
+      //     userId: this.props.userId,
+      //     // eventBus: this.state.eventBus
+      //   },
+      // });
     }
   };
 
@@ -97,7 +104,7 @@ class BoardContainer extends Component {
         <div>
           <span>Users:</span>
           <ul>
-            {Object.keys(board.users).map(el => <li>{board.users[el]}</li>)}
+            {board && Object.keys(board.users).map(el => <li>{board.users[el]}</li>)}
           </ul>
           <Share handleShareBoard={this.handleShareBoard} />
         </div>
@@ -124,11 +131,15 @@ const mapStateToProps = state => ({
   // state
 });
 
-const mapDispatchToProps = dispatch => ({
-  dispatch,
+const mapDispatchToProps = {
+
+  shareBoard,
+  getBoard,
+  getBoardSuccess,
+  updateBoard,
   // onSetUsers: users => dispatch({ type: "USERS_SET", users })
   // onCreateTodoRequest: ( users) => { console.log( users); return dispatch({ type: CREATE_TODO_REQUEST, users })},
-});
+}
 
 // const authCondition = authUser => !!authUser;
 

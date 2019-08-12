@@ -1,6 +1,6 @@
 import {
   AUTH_USER_SET
-} from '../constants/actions'
+} from '../../constants/actions'
 
 const INITIAL_STATE = {
   authUser: null,

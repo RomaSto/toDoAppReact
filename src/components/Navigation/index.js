@@ -6,15 +6,16 @@ import PropTypes from 'prop-types';
 import SignOutButton from '../SignOut';
 import * as routes from '../../constants/routes';
 
-const Navigation = ({ authUser }) => (
+ export const Navigation = ({ authUser }) => (
   <div>{authUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>
 );
 
 Navigation.propTypes = {
-  authUser: PropTypes.object.isRequired,
+  authUser: PropTypes.bool.isRequired,
 };
 
 const NavigationAuth = () => (
+
   <ul>
     <li>
       <Link to={routes.LANDING}>Landing</Link>
@@ -29,7 +30,8 @@ const NavigationAuth = () => (
       <SignOutButton />
     </li>
   </ul>
-);
+
+)
 
 
 const NavigationNonAuth = () => (
@@ -41,7 +43,7 @@ const NavigationNonAuth = () => (
       <Link to={routes.SIGN_IN}>Sign In</Link>
     </li>
   </ul>
-);
+)
 
 const mapStateToProps = state => ({
   authUser: state.sessionReducer.authUser,
