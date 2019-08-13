@@ -1,23 +1,13 @@
-// import React from 'react';
-// import Landing from './index';
-// import renderer from 'react-test-renderer';
+import React from 'react'
+import { render } from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect'
+import Landing from './index'
 
-// test('Link changes the class when hovered', () => {
-//   const component = renderer.create(
-//     <Link page="http://www.facebook.com">Facebook</Link>,
-//   );
-//   let tree = component.toJSON();
-//   expect(tree).toMatchSnapshot();
+test('displays Landing',  () => {
+  const {  getByTestId } = render(<Landing />)
 
-//   // manually trigger the callback
-//   tree.props.onMouseEnter();
-//   // re-rendering
-//   tree = component.toJSON();
-//   expect(tree).toMatchSnapshot();
-
-//   // manually trigger the callback
-//   tree.props.onMouseLeave();
-//   // re-rendering
-//   tree = component.toJSON();
-//   expect(tree).toMatchSnapshot();
-// });
+  expect(getByTestId("header")).toHaveTextContent("Landing");
+  expect(getByTestId("content")).toHaveTextContent(
+    "The Landing Page is open to everyone"
+  );
+})
