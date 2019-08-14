@@ -62,7 +62,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignInForm extends Component {
+export class SignInForm extends Component {
   constructor(props) {
     super(props);
 

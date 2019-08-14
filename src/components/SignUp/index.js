@@ -114,7 +114,7 @@ class SignUpForm extends Component {
 }
 
 SignUpForm.propTypes = {
-  history: PropTypes.object.isRequired,
+  history: PropTypes.object,
 };
 
 

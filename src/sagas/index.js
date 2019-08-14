@@ -3,7 +3,6 @@ import {
 } from 'redux-saga/effects';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-// import { db } from '../firebase';
 import { reduxSagaFirebase as rsf } from '../firebase/firebase';
 
 import {GET_BOARDS_SUCCESS,
@@ -91,7 +90,6 @@ function* updateBoard(action) {
 }
 
 function* createBoard(action) {
-  // console.log('action', action);
   const newBoard = _.clone(defaultBoard, true);
   newBoard.id = action.payload.boardId;
   newBoard.users = action.payload.users;
@@ -147,11 +145,8 @@ function* createUser(action) {
         },
       },
     });
-    // console.log('board', board);
   } catch (e) {
-    // console.log(e);
-
-    // yield put({ type: "CREATE_BOARD_ERROR", message: e.message });
+    yield put({ type: "CREATE_BOARD_ERROR", message: e.message });
   }
 }
 
@@ -165,6 +160,7 @@ function* shareBoard(action) {
     );
 
     const userExists = Object.keys(users).some(user => users[user].email === action.payload.email);
+    const userId = Object.keys(users).find(user => users[user].email === action.payload.email);
     const userHasAccess = Object.keys(boardUsers)
       .some(user => boardUsers[user] === action.payload.email);
 
@@ -175,7 +171,7 @@ function* shareBoard(action) {
     } else {
       yield call(
         rsf.database.create,
-        `users/${action.payload.userUid}/boards`,
+        `users/${userId}/boards`,
         {
           boardName: action.payload.boardName,
           boardId: action.payload.boardId,
@@ -198,10 +194,6 @@ function* shareBoard(action) {
     // yield put(createUserFailure(error));
   }
 }
-
-// const createUserSuccess = user => ({ type: "CREATE_USER_SUCCESS", user });
-// const createUserSuccess = user => ({ type: "CREATE_USER_SUCCESS", user });
-// const createUserFailure = error => ({ type: "CREATE_USER_FAILURE", error });
 
 export default function* rootSaga() {
   yield takeLatest('UPDATE_BOARD', updateBoard);

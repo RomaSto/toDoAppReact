@@ -45,8 +45,6 @@ class HomePage extends Component {
         <CreateNew handleCreateNewBoard={handleCreateNewBoard} />
         <ul>
           {Object.keys(boards).map((board) => {
-            console.log('boardHome', boards[board]);
-
             return (
               <li key={boards[board].boardId}>
                 <Link

@@ -1,19 +1,14 @@
 import React from 'react'
 import { render, fireEvent} from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
-import {SignInPage} from "./index";
-import { BrowserRouter , withRouter, MemoryRouter  } from 'react-router-dom';
+import {SignInForm} from "./index";
 import { createMemoryHistory } from 'history';
 const history = createMemoryHistory('/')
 const dispatch = {}
-const     withRouterSignIn =  <MemoryRouter ><SignInPage history={history} dispatch={dispatch} /></MemoryRouter>
-// function renderWithRouter(children, historyConf = {}) {
-//   const history = createMemoryHistory(historyConf)
-//   return render(<Router history={history}>{children}</Router>)
-// }
+const     withRouterSignIn =  <SignInForm history={history} dispatch={dispatch} />
+
 test("displays Sign in page", () => {
   const { getByPlaceholderText } = render(withRouterSignIn)
-
   expect(getByPlaceholderText("Email Address")).toBeInTheDocument();
   expect(getByPlaceholderText("Password")).toBeInTheDocument();
 });
@@ -30,20 +25,20 @@ const setup = () => {
 };
 
 test("Submit should be disabled if email is empty", () => {
-  const { email } = setup();
+  const { email, getByText } = setup();
   fireEvent.change(email, { target: { value: "" } });
-  expect(email.closest("button")).toHaveAttribute("disabled");
+  expect(getByText("Sign In")).toHaveAttribute("disabled");
 });
 
 test("Submit should be disabled if password is empty", () => {
-  const { password } = setup();
+  const { password, getByText } = setup();
   fireEvent.change(password, { target: { value: "" } });
-  expect(password.closest("button")).toHaveAttribute("disabled");
+  expect(getByText("Sign In")).toHaveAttribute("disabled");
 });
 
 test("Submit should be not be disabled if input is not empty", () => {
-  const { email, password } = setup();
+  const { email, password, getByText } = setup();
   fireEvent.change(email, { target: { value: "fff" } });
   fireEvent.change(password, { target: { value: "fff" } });
-  expect(email.closest("button")).not.toHaveAttribute( "disabled");
+  expect(getByText("Sign In")).not.toHaveAttribute( "disabled");
 });

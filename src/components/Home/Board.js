@@ -8,10 +8,6 @@ import Share from './Share';
 import {shareBoard, getBoard, getBoardSuccess, updateBoard} from "./actions"
 
 class BoardContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { eventBus: undefined };
-  }
 
   componentDidMount() {
 this.props.getBoard(this.props.match.params.id)
@@ -23,8 +19,8 @@ this.props.getBoard(this.props.match.params.id)
 
   handleShareBoard = ({ email, resolve, reject }) => {
     const { id, name } = this.props.board;
-   const uid = firebase.auth().currentUser.uid
-   const res =   this.props.shareBoard( {email, uid, id , name, resolve , reject})
+    const uid = firebase.auth().currentUser.uid
+    this.props.shareBoard( {email, uid, id , name, resolve , reject})
   };
 
   handleBoardUpdate = (board) => {
@@ -39,8 +35,6 @@ this.props.getBoard(this.props.match.params.id)
 
   normalizeTodos = (board) => {
     const newBoard = {};
-    console.log(board);
-
     newBoard.lanes = board.lanes.map((lane) => {
       const newLane = _.clone(lane, true);
       if (!newLane.cards) {
@@ -58,12 +52,10 @@ this.props.getBoard(this.props.match.params.id)
       handleBoardUpdate,
       normalizeTodos,
     } = this;
-    console.log('props', this.props);
 
     return (
       <div>
         <h4>{board && board.name}</h4>
-
         <div>
           <span>Users:</span>
           <ul>
@@ -91,7 +83,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-
   shareBoard,
   getBoard,
   getBoardSuccess,
