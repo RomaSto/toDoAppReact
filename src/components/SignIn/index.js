@@ -12,7 +12,7 @@ import * as authFunctions from '../../firebase/auth';
 // import * as db from '../../firebase/db';
 import * as routes from '../../constants/routes';
 
-const SignInPage = ({ history, dispatch }) => {
+export const SignInPage = ({ history, dispatch }) => {
   const compareUsers = () => {
     const { currentUser } = firebase.auth();
     dispatch({

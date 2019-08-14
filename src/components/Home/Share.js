@@ -27,17 +27,6 @@ class ShareBoard extends Component {
   render() {
     return (
       <div>
-        {
-          // <form style={{ marginBottom: 20 }} onSubmit={this.handleShare}>
-          //   <input
-          //     value={this.state.mail}
-          //     onChange={this.handleChange}
-          //     type="text"
-          //     placeholder="jane@mail.com"
-          //   />
-          //   <input type="submit" value="Share this board" />
-          // </form>
-        }
         <Formik
           initialValues={{ email: '' }}
           validate={(values) => {

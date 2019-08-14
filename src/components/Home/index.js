@@ -2,22 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import * as firebase from 'firebase';
-// import { v4 as uuidv4 } from 'uuid';
 import { Link } from 'react-router-dom';
-// import _ from 'lodash';
 
 import PropTypes from 'prop-types';
 import withAuthorization from '../Session/withAuthorization';
-// import { db } from '../../firebase';
-// import Board from './Board';
 import CreateNew from './CreateNew';
 import {
   createBoard,
-  //  onSetUsers
   } from "./actions"
-
-
-// import { auth } from '../../firebase/firebase';
 
 class HomePage extends Component {
   constructor(props) {
@@ -84,7 +76,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   dispatch,
   createBoard,
-  // onSetUsers: users => dispatch({ type: 'USERS_SET', users }),
 });
 
 const authCondition = authUser => !!authUser;

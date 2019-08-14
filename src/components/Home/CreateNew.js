@@ -1,14 +1,4 @@
 import React, { Component } from 'react';
-// import { connect } from 'react-redux';
-// import { compose } from 'redux';
-// import * as firebase from 'firebase';
-// import { v4 as uuidv4 } from 'uuid';
-// import _ from 'lodash';
-
-// import withAuthorization from '../Session/withAuthorization';
-// import { db } from '../../firebase';
-// import Board from './Board';
-// import { auth } from '../../firebase/firebase';
 
 class CreateNew extends Component {
   constructor(props) {
